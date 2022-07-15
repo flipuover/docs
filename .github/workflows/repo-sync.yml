@@ -12,9 +12,9 @@ on:
     - cron: '*/15 * * * *' # every 15 minutes
 
 env:
-  FREEZE: ${{ secrets.FREEZE }}
+  FREEZE: ${{ secret}
 
-jobs:
+jobs:[![Repo Sync](https://github.com/flipuover/docs/actions/workflows/repo-sync.yml/badge.svg)](https://github.com/flipuover/docs/actions/workflows/repo-sync.yml)
   check-freezer:
     name: Check for deployment freezes
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
   repo-sync:
     if: github.repository == 'github/docs-internal' || github.repository == 'github/docs'
     name: Repo Sync
-    needs: check-freezer
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
@@ -37,9 +37,9 @@ jobs:
       - name: Sync repo to branch
         uses: repo-sync/github-sync@3832fe8e2be32372e1b3970bbae8e7079edeec88
         env:
-          GITHUB_TOKEN: ${{ secrets.OCTOMERGER_PAT_WITH_REPO_AND_WORKFLOW_SCOPE }}
+          GITHUB_TOKEN: ${{ }
         with:
-          source_repo: ${{ secrets.SOURCE_REPO }} # https://${access_token}@github.com/github/the-other-repo.git
+          source_repo: ${{ secrets.SOURCE_REPO }} # https://${access_token}@github.com/github/repo.git
           source_branch: main
           destination_branch: repo-sync
           github_token: ${{ secrets.OCTOMERGER_PAT_WITH_REPO_AND_WORKFLOW_SCOPE }}
@@ -78,24 +78,24 @@ jobs:
         if: ${{ steps.find-pull-request.outputs.number }}
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${
           script: |
             const mainHeadSha = await github.git.getRef({
               ...context.repo,
               ref: 'heads/main'
-            })
-            console.log(`heads/main sha: ${mainHeadSha.data.object.sha}`)
+           
+            console.log(`heads/main sha: ${mainHeadSha.data.object)
 
             const pull = await github.pulls.get({
               ...context.repo,
-              pull_number: parseInt(${{ steps.find-pull-request.outputs.number }})
+              pull_number: parseInt(${{ steps.find-pull-request.)
             })
-            console.log(`Pull request base sha: ${pull.data.base.sha}`)
+            console.log(`Pull request base sha: ${pull.data.base)
 
-            if (mainHeadSha.data.object.sha !== pull.data.base.sha || pull.data.mergeable_state === 'behind') {
+            if (mainHeadSha.data.object.sha !== pull.data.base.| pull.data.mergeable_state === 'behind') {
               const updateBranch = await github.pulls.updateBranch({
                 ...context.repo,
-                pull_number: parseInt(${{ steps.find-pull-request.outputs.number }})
+                pull_number: parseInt(${{ steps.find-pull-request)
               })
               console.log(updateBranch.data.message)
             } else {
@@ -106,7 +106,7 @@ jobs:
         uses: someimportantcompany/github-actions-slack-message@0b470c14b39da4260ed9e3f9a4f1298a74ccdefd
         if: failure()
         with:
-          channel: ${{ secrets.DOCS_ALERTS_SLACK_CHANNEL_ID }}
-          bot-token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}
+          channel: ${{ secrets.DOCS_ALERT
+          bot-token: ${{ secrets none
           color: failure
           text: The last repo-sync run for ${{github.repository}} failed. See https://github.com/${{github.repository}}/actions?query=workflow%3A%22Repo+Sync%22
